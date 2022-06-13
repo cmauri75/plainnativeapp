@@ -1,10 +1,10 @@
-FROM ghcr.io/graalvm/graalvm-ce:ol7-java17-22.1.0
+FROM ghcr.io/graalvm/graalvm-ce:latest
 
 ADD . /build
 WORKDIR /build
 
 # For SDKMAN to work we need unzip & zip
-RUN yum install -y unzip zip
+RUN microdnf install -y unzip zip
 
 RUN \
     # Install SDKMAN

@@ -1,9 +1,9 @@
-FROM ghcr.io/graalvm/graalvm-ce:ol7-java17-22.1.0 AS builder
+FROM ghcr.io/graalvm/graalvm-ce:latest AS builder
 
 ADD . /build
 WORKDIR /build
 
-RUN yum install -y unzip zip
+RUN microdnf install -y unzip zip
 RUN \
     # Install SDKMAN
     curl -s "https://get.sdkman.io" | bash; \
