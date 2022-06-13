@@ -10,6 +10,7 @@ public class Controller {
 
     @GetMapping("/controller")
     public String controller() {
+        System.out.println("Controller called");
         return LocalDateTime.now().toString();
     }
 }

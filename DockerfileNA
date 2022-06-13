@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/graalvm-ce:ol7-java17-22.1.0
+FROM ghcr.io/graalvm/graalvm-ce:ol7-java17-22.1.0 AS builder
 
 ADD . /build
 WORKDIR /build
@@ -21,6 +21,15 @@ RUN native-image --version
 
 RUN source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-#downloads libraries
-RUN ./mvnw clean package
+RUN ./compile.sh
 
+FROM openjdk:17-jdk-oracle
+
+EXPOSE 8081
+
+MAINTAINER cesare.mauri@decathlon.com
+
+COPY --from=builder "/build/target/nativeapp" spring-boot-graal
+
+# Fire up our Spring Boot Native app by default
+CMD [ "sh", "-c", "./spring-boot-graal" ]

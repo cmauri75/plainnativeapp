@@ -1,0 +1,27 @@
+FROM ghcr.io/graalvm/graalvm-ce:ol7-java17-22.1.0 AS builder
+
+ADD . /build
+WORKDIR /build
+
+RUN yum install -y unzip zip
+RUN \
+    # Install SDKMAN
+    curl -s "https://get.sdkman.io" | bash; \
+    source "$HOME/.sdkman/bin/sdkman-init.sh"; \
+    # Install Maven
+    sdk install maven;
+
+RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && mvn --version
+
+RUN ./mvnw clean package
+
+FROM openjdk:17-jdk-oracle
+
+EXPOSE 8081
+
+MAINTAINER cesare.mauri@decathlon.com
+
+COPY --from=builder "/build/target/nativeapp-0.0.1-SNAPSHOT.jar" app.jar
+
+ENV JAVA_OPTS=""
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
